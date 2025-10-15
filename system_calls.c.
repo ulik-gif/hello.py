@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t pid = fork(); // fork жүйелік шақыруы: жаңа процесс (бала процесс) жасайды
+
+    if (pid < 0) {
+        perror("Fork error");
+        return 1;
+    } 
+    else if (pid == 0) {
+        // Бала процесс
+        printf("Бала процесс: exec() арқылы 'ls' командсын орындаймын.\n");
+        execlp("ls", "ls", "-l", NULL); // exec жүйелік шақыруы — жаңа бағдарлама іске қосу
+        perror("Exec error");
+    } 
+    else {
+        // Ата процесс
+        printf("Ата процесс: баланың аяқталуын күтем...\n");
+        wait(NULL); // wait жүйелік шақыруы — баланың аяқталуын күтеді
+        printf("Ата процесс: бала процесс аяқталды.\n");
+    }
+
+    return 0;
+}
